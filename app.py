@@ -4,10 +4,9 @@ import json
 import requests
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse, JSONResponse, FileResponse
-from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 from typing import Optional
+
 
 from gst_scraper import make_session, fetch_captcha, solve_captcha_with_krutrim, lookup_gstin, load_env_file
 
