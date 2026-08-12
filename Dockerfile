@@ -1,16 +1,21 @@
-FROM python:3.11-slim
+FROM python:3.11-bookworm-slim
 
 WORKDIR /app
 
-# Install dependencies
-COPY requirements.txt .
+# Environment variables to optimize Python runtime in container
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
+# Copy dependency files and install dependencies cleanly
+COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy application files
+# Copy the rest of the application code
 COPY . .
 
-# Expose web server port
+# Expose the application port
 EXPOSE 4192
 
-# Start Uvicorn production server
+# Start the FastAPI application with Uvicorn
 CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "4192"]
+
