@@ -6,7 +6,7 @@ services:
     expose:
       - "4192"
     ports:
-      - "4192"
+      - "4192:4192"
     environment:
       - KRUTRIM_API_KEY=${KRUTRIM_API_KEY:-}
       - PORT=${PORT:-4192}
