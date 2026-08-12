@@ -1,0 +1,14 @@
+services:
+  gst-scraper:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: gst_scraper_app
+    ports:
+      - "4192:4192"
+    env_file:
+      - .env
+    environment:
+      - KRUTRIM_API_KEY=${KRUTRIM_API_KEY}
+      - PORT=4192
+    restart: unless-stopped
