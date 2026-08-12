@@ -459,6 +459,16 @@ func handleSearch(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]interface{}{"detail": "Invalid request parameters."})
 }
 
+func handleHealth(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
+}
+
+func handleFavicon(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNoContent)
+}
+
 func main() {
 	loadEnv()
 
@@ -466,6 +476,10 @@ func main() {
 	if port == "" {
 		port = "4192"
 	}
+
+	http.HandleFunc("/health", handleHealth)
+	http.HandleFunc("/api/health", handleHealth)
+	http.HandleFunc("/favicon.ico", handleFavicon)
 
 	http.HandleFunc("/", handleServeUI)
 	http.HandleFunc("/api/config", handleGetConfig)
@@ -477,3 +491,4 @@ func main() {
 		log.Fatalf("Server failed: %v", err)
 	}
 }
+
