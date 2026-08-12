@@ -87,7 +87,13 @@ type CookieStruct struct {
 func createClient() (*http.Client, *cookiejar.Jar) {
 	jar, _ := cookiejar.New(nil)
 	tr := &http.Transport{
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		TLSClientConfig: &tls.Config{
+			InsecureSkipVerify: true,
+			MinVersion:         tls.VersionTLS12,
+		},
+		DisableKeepAlives: false,
+		MaxIdleConns:      10,
+		IdleConnTimeout:   30 * time.Second,
 	}
 	client := &http.Client{
 		Jar:       jar,
@@ -97,10 +103,38 @@ func createClient() (*http.Client, *cookiejar.Jar) {
 	return client, jar
 }
 
-func addHeaders(req *http.Request) {
-	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
+func addHeaders(req *http.Request, acceptHeader string) {
+	if acceptHeader == "" {
+		acceptHeader = "application/json, text/plain, */*"
+	}
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36")
+	req.Header.Set("Accept", acceptHeader)
+	req.Header.Set("Accept-Language", "en-US,en;q=0.9,hi;q=0.8")
 	req.Header.Set("Origin", "https://services.gst.gov.in")
 	req.Header.Set("Referer", "https://services.gst.gov.in/services/searchtp")
+	req.Header.Set("Sec-Ch-Ua", `"Not A(Brand";v="99", "Google Chrome";v="121", "Chromium";v="121"`)
+	req.Header.Set("Sec-Ch-Ua-Mobile", "?0")
+	req.Header.Set("Sec-Ch-Ua-Platform", `"Windows"`)
+	req.Header.Set("Sec-Fetch-Dest", "empty")
+	req.Header.Set("Sec-Fetch-Mode", "cors")
+	req.Header.Set("Sec-Fetch-Site", "same-origin")
+}
+
+func ensureSession(client *http.Client) {
+	u, _ := url.Parse("https://services.gst.gov.in")
+	if len(client.Jar.Cookies(u)) > 0 {
+		return
+	}
+	req, err := http.NewRequest("GET", "https://services.gst.gov.in/services/searchtp", nil)
+	if err != nil {
+		return
+	}
+	addHeaders(req, "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8")
+	resp, err := client.Do(req)
+	if err == nil {
+		io.Copy(io.Discard, resp.Body)
+		resp.Body.Close()
+	}
 }
 
 func serializeCookies(jar *cookiejar.Jar) string {
@@ -135,13 +169,15 @@ func deserializeCookies(jar *cookiejar.Jar, cookiesB64 string) {
 }
 
 func fetchCaptcha(client *http.Client) ([]byte, error) {
+	ensureSession(client)
+
 	rnd := rand.Float64()
 	urlStr := fmt.Sprintf("https://services.gst.gov.in/services/captcha?rnd=%f", rnd)
 	req, err := http.NewRequest("GET", urlStr, nil)
 	if err != nil {
 		return nil, err
 	}
-	addHeaders(req)
+	addHeaders(req, "image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8")
 	resp, err := client.Do(req)
 	if err != nil {
 		return nil, err
@@ -242,7 +278,7 @@ func lookupGSTIN(client *http.Client, gstin, captcha string) (map[string]interfa
 		return nil, err
 	}
 
-	addHeaders(req)
+	addHeaders(req, "application/json, text/plain, */*")
 	req.Header.Set("Content-Type", "application/json")
 
 	resp, err := client.Do(req)
@@ -393,6 +429,9 @@ func handleSearch(w http.ResponseWriter, r *http.Request) {
 		lastErr := "Could not decode CAPTCHA"
 
 		for attempt := 1; attempt <= maxAttempts; attempt++ {
+			if attempt > 1 {
+				time.Sleep(400 * time.Millisecond)
+			}
 			rawBytes, err := fetchCaptcha(client)
 			if err != nil {
 				lastErr = fmt.Sprintf("Attempt %d fetch error: %v", attempt, err)
