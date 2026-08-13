@@ -9,5 +9,8 @@ services:
       - "4192:4192"
     environment:
       - KRUTRIM_API_KEY=${KRUTRIM_API_KEY:-}
+      - APP_API_KEY=${APP_API_KEY:-}
+      - ADMIN_USERNAME=${ADMIN_USERNAME:-admin}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-{bcU$-kx%ndbO~qy}
       - PORT=${PORT:-4192}
     restart: unless-stopped

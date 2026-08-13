@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,10 +8,12 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <style>
         :root {
             --bg-dark: #090D16;
@@ -45,7 +48,7 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            background-image: 
+            background-image:
                 radial-gradient(circle at 15% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 40%),
                 radial-gradient(circle at 85% 80%, rgba(236, 72, 153, 0.12) 0%, transparent 40%);
             background-attachment: fixed;
@@ -131,9 +134,20 @@
         }
 
         @keyframes pulse-ring {
-            0% { transform: scale(0.95); opacity: 0.8; }
-            50% { transform: scale(1.15); opacity: 1; }
-            100% { transform: scale(0.95); opacity: 0.8; }
+            0% {
+                transform: scale(0.95);
+                opacity: 0.8;
+            }
+
+            50% {
+                transform: scale(1.15);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(0.95);
+                opacity: 0.8;
+            }
         }
 
         /* Glassmorphism Cards */
@@ -278,7 +292,10 @@
         .slider {
             position: absolute;
             cursor: pointer;
-            top: 0; left: 0; right: 0; bottom: 0;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             background-color: rgba(255, 255, 255, 0.1);
             transition: .3s;
             border-radius: 34px;
@@ -296,11 +313,11 @@
             border-radius: 50%;
         }
 
-        input:checked + .slider {
+        input:checked+.slider {
             background: var(--accent-gradient);
         }
 
-        input:checked + .slider:before {
+        input:checked+.slider:before {
             transform: translateX(24px);
         }
 
@@ -513,12 +530,21 @@
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         footer {
@@ -528,8 +554,94 @@
             font-size: 0.82rem;
             border-top: 1px solid var(--card-border);
         }
+
+        .input-icon-right {
+            position: absolute;
+            right: 1rem;
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0.2rem 0.4rem;
+            border-radius: var(--radius-sm);
+            transition: color 0.2s ease;
+        }
+
+        .input-icon-right:hover {
+            color: var(--text-primary);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .user-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.4rem 0.9rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            background: rgba(99, 102, 241, 0.15);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            color: #A5B4FC;
+        }
+
+        .btn-logout {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #F87171;
+            padding: 0.25rem 0.65rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .btn-logout:hover {
+            background: rgba(239, 68, 68, 0.25);
+            color: white;
+        }
+
+        .api-key-box {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-md);
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .api-key-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+        }
+
+        .api-key-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .api-key-title i {
+            color: #F59E0B;
+        }
     </style>
 </head>
+
 <body>
     <div class="container">
         <!-- Header -->
@@ -543,151 +655,238 @@
                     <p class="brand-subtitle">Powered by AI CAPTCHA Recognition & Official GST Portal</p>
                 </div>
             </div>
-            <div id="ai-status-badge" class="badge-status">
-                <span class="pulse"></span>
-                <span id="ai-status-text">Checking AI Key...</span>
+            <div class="header-actions">
+                <div id="ai-status-badge" class="badge-status" style="display: none;">
+                    <span class="pulse"></span>
+                    <span id="ai-status-text">Checking AI Key...</span>
+                </div>
+                <div id="user-header-badge" class="user-pill" style="display: none;">
+                    <i class="fa-solid fa-user-shield"></i>
+                    <span id="user-name-text">admin</span>
+                    <button class="btn-logout" onclick="handleLogout()" title="Sign Out">
+                        <i class="fa-solid fa-right-from-bracket"></i> Logout
+                    </button>
+                </div>
             </div>
         </header>
 
-        <!-- Search Form Card -->
-        <div class="glass-card">
-            <div class="card-header">
-                <h2 class="card-title">
-                    <i class="fa-solid fa-magnifying-glass"></i> Search Taxpayer
-                </h2>
-                <p class="card-desc">Enter any 15-digit GSTIN to query taxpayer registration details.</p>
+        <!-- Login Card (shown when unauthenticated) -->
+        <div id="login-card" class="glass-card" style="display: none; max-width: 440px; margin: 2rem auto;">
+            <div class="card-header" style="text-align: center;">
+                <div
+                    style="width: 52px; height: 52px; border-radius: var(--radius-md); background: var(--accent-gradient); display: inline-flex; align-items: center; justify-content: center; font-size: 1.5rem; color: white; margin-bottom: 1rem; box-shadow: var(--shadow-glow);">
+                    <i class="fa-solid fa-lock"></i>
+                </div>
+                <h2 class="card-title" style="justify-content: center; font-size: 1.35rem;">Admin Access</h2>
+                <p class="card-desc">Sign in with your admin credentials to continue.</p>
             </div>
 
-            <!-- Error alert -->
-            <div id="error-alert" class="alert-box">
+            <!-- Login Error alert -->
+            <div id="login-error-alert" class="alert-box">
                 <i class="fa-solid fa-triangle-exclamation"></i>
-                <span id="error-msg">Error message goes here</span>
+                <span id="login-error-msg">Invalid username or password</span>
             </div>
 
-            <form id="search-form" onsubmit="handleSearch(event)">
-                <!-- GSTIN Input -->
+            <form id="login-form" onsubmit="handleLoginSubmit(event)">
                 <div class="form-group">
-                    <label class="form-label" for="gstin-input">GSTIN Number</label>
+                    <label class="form-label" for="login-username">Username</label>
                     <div class="input-wrapper">
-                        <i class="fa-solid fa-id-card input-icon"></i>
-                        <input 
-                            type="text" 
-                            id="gstin-input" 
-                            class="form-input" 
-                            placeholder="e.g. 27AAPCS1084F1ZS" 
-                            maxlength="15" 
-                            required
-                            autocomplete="off"
-                            oninput="this.value = this.value.toUpperCase();"
-                        >
+                        <i class="fa-solid fa-user input-icon"></i>
+                        <input type="text" id="login-username" class="form-input" placeholder="admin" required
+                            autocomplete="username">
                     </div>
                 </div>
 
-                <!-- Auto-Solve Toggle -->
-                <div class="switch-container">
-                    <div class="switch-info">
-                        <i class="fa-solid fa-wand-magic-sparkles"></i>
-                        <div>
-                            <div class="switch-title">Auto-Solve CAPTCHA with AI</div>
-                            <div class="switch-sub">Uses Krutrim Gemma 4 Vision AI for instant decoding</div>
-                        </div>
-                    </div>
-                    <label class="toggle-switch">
-                        <input type="checkbox" id="auto-solve-toggle" checked onchange="toggleAutoSolveMode()">
-                        <span class="slider"></span>
-                    </label>
-                </div>
-
-                <!-- Manual CAPTCHA Box (hidden if auto-solve is enabled) -->
-                <div id="manual-captcha-box" class="captcha-box">
-                    <div class="form-label">Verification CAPTCHA</div>
-                    <div class="captcha-row">
-                        <div class="captcha-img-wrapper">
-                            <img id="captcha-img" src="" alt="CAPTCHA Image">
-                        </div>
-                        <button type="button" class="btn-refresh" onclick="loadManualCaptcha()" title="Refresh CAPTCHA">
-                            <i class="fa-solid fa-arrows-rotate"></i>
+                <div class="form-group">
+                    <label class="form-label" for="login-password">Password</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-key input-icon"></i>
+                        <input type="password" id="login-password" class="form-input" placeholder="Enter password"
+                            required autocomplete="current-password" style="padding-right: 3rem;">
+                        <button type="button" class="input-icon-right"
+                            onclick="togglePasswordVisibility('login-password', 'login-pass-icon')"
+                            title="Toggle Password Visibility">
+                            <i id="login-pass-icon" class="fa-solid fa-eye"></i>
                         </button>
-                        <div class="input-wrapper" style="flex: 1; min-width: 150px;">
-                            <input 
-                                type="text" 
-                                id="captcha-input" 
-                                class="form-input" 
-                                placeholder="6 Digits" 
-                                maxlength="6" 
-                                style="padding-left: 1rem; text-align: center;"
-                            >
-                        </div>
                     </div>
                 </div>
 
-                <!-- Submit Button -->
-                <button type="submit" id="btn-search" class="btn-primary">
-                    <span id="btn-text"><i class="fa-solid fa-bolt"></i> Lookup Taxpayer Details</span>
-                    <span id="btn-loader" style="display: none;"><span class="spinner"></span> Processing Query...</span>
+                <button type="submit" id="btn-login-submit" class="btn-primary" style="margin-top: 0.5rem;">
+                    <span id="login-btn-text"><i class="fa-solid fa-right-to-bracket"></i> Sign In</span>
+                    <span id="login-btn-loader" style="display: none;"><span class="spinner"></span>
+                        Authenticating...</span>
                 </button>
             </form>
         </div>
 
-        <!-- Results Card -->
-        <div id="results-card" class="glass-card result-container">
-            <div class="status-header">
-                <div>
-                    <div class="detail-label">Queried GSTIN</div>
-                    <div id="res-gstin" class="gstin-display">--</div>
+        <!-- Main App Dashboard View (hidden until authenticated) -->
+        <div id="dashboard-view" style="display: none;">
+            <!-- API Key Card for Admin -->
+            <div id="api-key-card" class="api-key-box">
+                <div class="api-key-header">
+                    <div class="api-key-title">
+                        <i class="fa-solid fa-key"></i> App API Key (Endpoint Access)
+                    </div>
+                    <span id="api-key-status" class="badge-status">
+                        <span class="pulse"></span>
+                        <span id="api-key-status-text">Active</span>
+                    </span>
                 </div>
-                <div id="res-status-pill" class="status-pill active-status">ACTIVE</div>
+                <div class="input-wrapper" style="margin-top: 0.75rem;">
+                    <i class="fa-solid fa-shield-halved input-icon"></i>
+                    <input type="password" id="api-key-input" class="form-input" readonly value="Loading key..."
+                        style="padding-right: 5.5rem; font-size: 0.95rem; color: #A78BFA;">
+                    <div style="position: absolute; right: 0.75rem; display: flex; gap: 0.4rem;">
+                        <button type="button" class="input-icon-right" style="position: static;"
+                            onclick="togglePasswordVisibility('api-key-input', 'api-key-eye-icon')"
+                            title="Show/Hide API Key">
+                            <i id="api-key-eye-icon" class="fa-solid fa-eye"></i>
+                        </button>
+                        <button type="button" class="input-icon-right" style="position: static;" onclick="copyApiKey()"
+                            title="Copy API Key">
+                            <i id="api-key-copy-icon" class="fa-solid fa-copy"></i>
+                        </button>
+                    </div>
+                </div>
+                <div
+                    style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.6rem; display: flex; align-items: center; gap: 0.35rem;">
+                    <i class="fa-solid fa-circle-info"></i> Send via <code
+                        style="background: rgba(255,255,255,0.08); padding: 1px 6px; border-radius: 4px; color: #E2E8F0;">X-API-Key</code>
+                    or <code
+                        style="background: rgba(255,255,255,0.08); padding: 1px 6px; border-radius: 4px; color: #E2E8F0;">Authorization: Bearer</code>
+                    header to authenticate direct API calls.
+                </div>
             </div>
 
-            <div class="grid-2">
-                <div class="detail-item" style="grid-column: 1 / -1;">
-                    <div class="detail-label">Legal Name of Business</div>
-                    <div id="res-lgnm" class="detail-value highlight">--</div>
+            <!-- Search Form Card -->
+            <div class="glass-card">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <i class="fa-solid fa-magnifying-glass"></i> Search Taxpayer
+                    </h2>
+                    <p class="card-desc">Enter any 15-digit GSTIN to query taxpayer registration details.</p>
                 </div>
 
-                <div class="detail-item">
-                    <div class="detail-label">Trade Name</div>
-                    <div id="res-tradeNam" class="detail-value">--</div>
+                <!-- Error alert -->
+                <div id="error-alert" class="alert-box">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <span id="error-msg">Error message goes here</span>
                 </div>
 
-                <div class="detail-item">
-                    <div class="detail-label">Taxpayer Type</div>
-                    <div id="res-dty" class="detail-value">--</div>
+                <form id="search-form" onsubmit="handleSearch(event)">
+                    <!-- GSTIN Input -->
+                    <div class="form-group">
+                        <label class="form-label" for="gstin-input">GSTIN Number</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-id-card input-icon"></i>
+                            <input type="text" id="gstin-input" class="form-input" placeholder="e.g. 27AAPCS1084F1ZS"
+                                maxlength="15" required autocomplete="off"
+                                oninput="this.value = this.value.toUpperCase();">
+                        </div>
+                    </div>
+
+                    <!-- Auto-Solve Toggle -->
+                    <div class="switch-container">
+                        <div class="switch-info">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                            <div>
+                                <div class="switch-title">Auto-Solve CAPTCHA with AI</div>
+                                <div class="switch-sub">Uses Krutrim Gemma 4 Vision AI for instant decoding</div>
+                            </div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="auto-solve-toggle" checked onchange="toggleAutoSolveMode()">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <!-- Manual CAPTCHA Box (hidden if auto-solve is enabled) -->
+                    <div id="manual-captcha-box" class="captcha-box">
+                        <div class="form-label">Verification CAPTCHA</div>
+                        <div class="captcha-row">
+                            <div class="captcha-img-wrapper">
+                                <img id="captcha-img" src="" alt="CAPTCHA Image">
+                            </div>
+                            <button type="button" class="btn-refresh" onclick="loadManualCaptcha()"
+                                title="Refresh CAPTCHA">
+                                <i class="fa-solid fa-arrows-rotate"></i>
+                            </button>
+                            <div class="input-wrapper" style="flex: 1; min-width: 150px;">
+                                <input type="text" id="captcha-input" class="form-input" placeholder="6 Digits"
+                                    maxlength="6" style="padding-left: 1rem; text-align: center;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" id="btn-search" class="btn-primary">
+                        <span id="btn-text"><i class="fa-solid fa-bolt"></i> Lookup Taxpayer Details</span>
+                        <span id="btn-loader" style="display: none;"><span class="spinner"></span> Processing
+                            Query...</span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Results Card -->
+            <div id="results-card" class="glass-card result-container">
+                <div class="status-header">
+                    <div>
+                        <div class="detail-label">Queried GSTIN</div>
+                        <div id="res-gstin" class="gstin-display">--</div>
+                    </div>
+                    <div id="res-status-pill" class="status-pill active-status">ACTIVE</div>
                 </div>
 
-                <div class="detail-item">
-                    <div class="detail-label">Constitution of Business</div>
-                    <div id="res-ctb" class="detail-value">--</div>
-                </div>
+                <div class="grid-2">
+                    <div class="detail-item" style="grid-column: 1 / -1;">
+                        <div class="detail-label">Legal Name of Business</div>
+                        <div id="res-lgnm" class="detail-value highlight">--</div>
+                    </div>
 
-                <div class="detail-item">
-                    <div class="detail-label">Registration Date</div>
-                    <div id="res-rgdt" class="detail-value">--</div>
-                </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Trade Name</div>
+                        <div id="res-tradeNam" class="detail-value">--</div>
+                    </div>
 
-                <div class="detail-item">
-                    <div class="detail-label">State Jurisdiction</div>
-                    <div id="res-stj" class="detail-value">--</div>
-                </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Taxpayer Type</div>
+                        <div id="res-dty" class="detail-value">--</div>
+                    </div>
 
-                <div class="detail-item">
-                    <div class="detail-label">Central Jurisdiction</div>
-                    <div id="res-ctj" class="detail-value">--</div>
-                </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Constitution of Business</div>
+                        <div id="res-ctb" class="detail-value">--</div>
+                    </div>
 
-                <div class="detail-item" style="grid-column: 1 / -1;">
-                    <div class="detail-label">Principal Place of Business Address</div>
-                    <div id="res-address" class="detail-value">--</div>
-                </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Registration Date</div>
+                        <div id="res-rgdt" class="detail-value">--</div>
+                    </div>
 
-                <div class="detail-item">
-                    <div class="detail-label">Nature of Business Activities</div>
-                    <div id="res-nba" class="detail-value">--</div>
-                </div>
+                    <div class="detail-item">
+                        <div class="detail-label">State Jurisdiction</div>
+                        <div id="res-stj" class="detail-value">--</div>
+                    </div>
 
-                <div class="detail-item">
-                    <div class="detail-label">E-Invoice Status</div>
-                    <div id="res-einvoice" class="detail-value">--</div>
+                    <div class="detail-item">
+                        <div class="detail-label">Central Jurisdiction</div>
+                        <div id="res-ctj" class="detail-value">--</div>
+                    </div>
+
+                    <div class="detail-item" style="grid-column: 1 / -1;">
+                        <div class="detail-label">Principal Place of Business Address</div>
+                        <div id="res-address" class="detail-value">--</div>
+                    </div>
+
+                    <div class="detail-item">
+                        <div class="detail-label">Nature of Business Activities</div>
+                        <div id="res-nba" class="detail-value">--</div>
+                    </div>
+
+                    <div class="detail-item">
+                        <div class="detail-label">E-Invoice Status</div>
+                        <div id="res-einvoice" class="detail-value">--</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -700,16 +899,119 @@
     <script>
         let currentCookiesB64 = null;
         let krutrimAvailable = false;
+        let fullApiKey = "";
 
         document.addEventListener('DOMContentLoaded', async () => {
-            await checkConfig();
+            await checkAuth();
         });
+
+        async function checkAuth() {
+            try {
+                const res = await fetch('/api/me');
+                const data = await res.json();
+
+                if (data.authenticated) {
+                    document.getElementById('login-card').style.display = 'none';
+                    document.getElementById('dashboard-view').style.display = 'block';
+                    document.getElementById('user-header-badge').style.display = 'inline-flex';
+                    document.getElementById('user-name-text').textContent = data.username || 'admin';
+                    document.getElementById('ai-status-badge').style.display = 'inline-flex';
+
+                    await checkConfig();
+                } else {
+                    document.getElementById('login-card').style.display = 'block';
+                    document.getElementById('dashboard-view').style.display = 'none';
+                    document.getElementById('user-header-badge').style.display = 'none';
+                    document.getElementById('ai-status-badge').style.display = 'none';
+                }
+            } catch (err) {
+                console.error("Auth check failed", err);
+                document.getElementById('login-card').style.display = 'block';
+                document.getElementById('dashboard-view').style.display = 'none';
+            }
+        }
+
+        async function handleLoginSubmit(e) {
+            e.preventDefault();
+            const errBox = document.getElementById('login-error-alert');
+            errBox.classList.remove('active');
+
+            const username = document.getElementById('login-username').value.trim();
+            const password = document.getElementById('login-password').value;
+
+            setLoginLoading(true);
+
+            try {
+                const res = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await res.json();
+
+                if (res.ok && data.success) {
+                    document.getElementById('login-password').value = '';
+                    await checkAuth();
+                } else {
+                    document.getElementById('login-error-msg').textContent = data.message || "Invalid username or password";
+                    errBox.classList.add('active');
+                }
+            } catch (err) {
+                document.getElementById('login-error-msg').textContent = "Connection error. Please try again.";
+                errBox.classList.add('active');
+            } finally {
+                setLoginLoading(false);
+            }
+        }
+
+        function setLoginLoading(loading) {
+            const btn = document.getElementById('btn-login-submit');
+            const txt = document.getElementById('login-btn-text');
+            const loader = document.getElementById('login-btn-loader');
+            btn.disabled = loading;
+            if (loading) {
+                txt.style.display = 'none';
+                loader.style.display = 'inline-flex';
+            } else {
+                txt.style.display = 'inline-flex';
+                loader.style.display = 'none';
+            }
+        }
+
+        async function handleLogout() {
+            try {
+                await fetch('/api/logout', { method: 'POST' });
+            } catch (err) {
+                console.error("Logout error", err);
+            }
+            await checkAuth();
+        }
 
         async function checkConfig() {
             try {
                 const res = await fetch('/api/config');
+                if (res.status === 401) {
+                    await checkAuth();
+                    return;
+                }
                 const data = await res.json();
                 krutrimAvailable = data.krutrim_available;
+                fullApiKey = data.app_api_key || "";
+
+                const apiKeyInput = document.getElementById('api-key-input');
+                const apiKeyStatus = document.getElementById('api-key-status-text');
+                const apiKeyBadge = document.getElementById('api-key-status');
+
+                if (fullApiKey) {
+                    apiKeyInput.value = fullApiKey;
+                    apiKeyStatus.textContent = "Active";
+                    apiKeyBadge.classList.remove('warning');
+                } else {
+                    apiKeyInput.value = "No App API key configured";
+                    apiKeyStatus.textContent = "Key Missing";
+                    apiKeyBadge.classList.add('warning');
+                }
 
                 const badge = document.getElementById('ai-status-badge');
                 const badgeText = document.getElementById('ai-status-text');
@@ -717,16 +1019,44 @@
 
                 if (krutrimAvailable) {
                     badge.classList.remove('warning');
-                    badgeText.textContent = `AI Auto-Solver Ready (${data.masked_key})`;
+                    badgeText.textContent = `AI Auto-Solver Active`;
                     toggle.checked = true;
                 } else {
                     badge.classList.add('warning');
-                    badgeText.textContent = 'AI Key Not Set (Manual Mode)';
+                    badgeText.textContent = 'AI Solver Not Configured (Manual Mode)';
                     toggle.checked = false;
                 }
                 toggleAutoSolveMode();
             } catch (err) {
                 console.error("Config check failed", err);
+            }
+        }
+
+        function togglePasswordVisibility(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        async function copyApiKey() {
+            if (!fullApiKey) return;
+            try {
+                await navigator.clipboard.writeText(fullApiKey);
+                const icon = document.getElementById('api-key-copy-icon');
+                icon.className = 'fa-solid fa-check';
+                setTimeout(() => {
+                    icon.className = 'fa-solid fa-copy';
+                }, 2000);
+            } catch (err) {
+                console.error("Failed to copy API key", err);
             }
         }
 
@@ -747,7 +1077,15 @@
             const imgEl = document.getElementById('captcha-img');
             imgEl.src = '';
             try {
-                const res = await fetch('/api/captcha');
+                const headers = {};
+                if (fullApiKey) {
+                    headers['X-API-Key'] = fullApiKey;
+                }
+                const res = await fetch('/api/captcha', { headers });
+                if (res.status === 401) {
+                    await checkAuth();
+                    return;
+                }
                 const data = await res.json();
                 if (data.success) {
                     imgEl.src = data.captcha_image;
@@ -801,17 +1139,26 @@
                     cookies_b64: currentCookiesB64
                 };
 
+                const headers = { 'Content-Type': 'application/json' };
+                if (fullApiKey) {
+                    headers['X-API-Key'] = fullApiKey;
+                }
+
                 const res = await fetch('/api/search', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: headers,
                     body: JSON.stringify(payload)
                 });
+
+                if (res.status === 401) {
+                    await checkAuth();
+                    return;
+                }
 
                 const data = await res.json();
 
                 if (!res.ok || !data.success) {
                     if (data.error === 'AUTO_SOLVE_FAILED') {
-                        // Fallback to manual mode with preloaded captcha
                         showError(data.message);
                         document.getElementById('auto-solve-toggle').checked = false;
                         toggleAutoSolveMode();
@@ -883,4 +1230,5 @@
         }
     </script>
 </body>
+
 </html>

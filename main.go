@@ -2,8 +2,10 @@ package main
 
 import (
 	"bytes"
+	crand "crypto/rand"
 	"crypto/tls"
 	"encoding/base64"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -16,6 +18,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -50,6 +53,137 @@ type SearchRequest struct {
 	Captcha    string `json:"captcha"`
 	CookiesB64 string `json:"cookies_b64"`
 	AutoSolve  bool   `json:"auto_solve"`
+}
+
+// Session and Auth Management
+type Session struct {
+	Username  string
+	CreatedAt time.Time
+}
+
+type LoginRequest struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
+var (
+	sessionsMutex sync.RWMutex
+	sessions      = make(map[string]Session)
+)
+
+const (
+	sessionCookieName = "gst_session"
+	sessionDuration   = 24 * time.Hour
+)
+
+func generateSessionToken() string {
+	b := make([]byte, 32)
+	crand.Read(b)
+	return hex.EncodeToString(b)
+}
+
+func getAdminCredentials() (string, string) {
+	username := os.Getenv("ADMIN_USERNAME")
+	if username == "" {
+		username = "admin"
+	}
+	password := os.Getenv("ADMIN_PASSWORD")
+	if password == "" {
+		password = "{bcU$-kx%ndbO~qy"
+	}
+	return username, password
+}
+
+func isValidSession(r *http.Request) bool {
+	cookie, err := r.Cookie(sessionCookieName)
+	if err != nil || cookie.Value == "" {
+		return false
+	}
+	sessionsMutex.RLock()
+	sess, exists := sessions[cookie.Value]
+	sessionsMutex.RUnlock()
+	if !exists {
+		return false
+	}
+	if time.Since(sess.CreatedAt) > sessionDuration {
+		sessionsMutex.Lock()
+		delete(sessions, cookie.Value)
+		sessionsMutex.Unlock()
+		return false
+	}
+	return true
+}
+
+var (
+	appApiKey     string
+	appApiKeyOnce sync.Once
+)
+
+func getAppAPIKey() string {
+	appApiKeyOnce.Do(func() {
+		key := strings.TrimSpace(os.Getenv("APP_API_KEY"))
+		if key == "" || key == "your_app_api_key_here" {
+			key = "gst_sec_" + generateSessionToken()
+			os.Setenv("APP_API_KEY", key)
+			log.Printf("[INFO] APP_API_KEY was not set. Generated random key: %s", key)
+		}
+		appApiKey = key
+	})
+	return appApiKey
+}
+
+func isValidApiKey(r *http.Request) bool {
+	configuredKey := getAppAPIKey()
+	if configuredKey == "" {
+		return false
+	}
+
+	// 1. Check X-API-Key header
+	apiKeyHeader := strings.TrimSpace(r.Header.Get("X-API-Key"))
+	if apiKeyHeader != "" && apiKeyHeader == configuredKey {
+		return true
+	}
+
+	// 2. Check Authorization Bearer header
+	authHeader := strings.TrimSpace(r.Header.Get("Authorization"))
+	if authHeader != "" {
+		if strings.HasPrefix(authHeader, "Bearer ") {
+			token := strings.TrimSpace(strings.TrimPrefix(authHeader, "Bearer "))
+			if token == configuredKey {
+				return true
+			}
+		} else if authHeader == configuredKey {
+			return true
+		}
+	}
+
+	// 3. Check query parameter api_key
+	queryKey := strings.TrimSpace(r.URL.Query().Get("api_key"))
+	if queryKey != "" && queryKey == configuredKey {
+		return true
+	}
+
+	return false
+}
+
+func isValidRequest(r *http.Request) bool {
+	return isValidSession(r) || isValidApiKey(r)
+}
+
+func requireAuth(handler http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if !isValidRequest(r) {
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusUnauthorized)
+			json.NewEncoder(w).Encode(map[string]interface{}{
+				"success": false,
+				"error":   "UNAUTHORIZED",
+				"detail":  "Authentication required. Provide a valid session cookie or X-API-Key header.",
+			})
+			return
+		}
+		handler(w, r)
+	}
 }
 
 // Krutrim API Structs
@@ -311,23 +445,100 @@ func handleServeUI(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, indexPath)
 }
 
-func handleGetConfig(w http.ResponseWriter, r *http.Request) {
-	apiKey := strings.TrimSpace(os.Getenv("KRUTRIM_API_KEY"))
-	hasKey := apiKey != "" && apiKey != "your_krutrim_api_key_here"
-
-	maskedKey := ""
-	if hasKey {
-		if len(apiKey) > 10 {
-			maskedKey = apiKey[:6] + "..." + apiKey[len(apiKey)-4:]
-		} else {
-			maskedKey = "***"
-		}
+func handleLogin(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "POST" {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
 	}
+
+	var req LoginRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]interface{}{"success": false, "message": "Invalid request payload"})
+		return
+	}
+
+	adminUser, adminPass := getAdminCredentials()
+	if req.Username != adminUser || req.Password != adminPass {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusUnauthorized)
+		json.NewEncoder(w).Encode(map[string]interface{}{"success": false, "message": "Invalid username or password"})
+		return
+	}
+
+	token := generateSessionToken()
+	sessionsMutex.Lock()
+	sessions[token] = Session{
+		Username:  adminUser,
+		CreatedAt: time.Now(),
+	}
+	sessionsMutex.Unlock()
+
+	http.SetCookie(w, &http.Cookie{
+		Name:     sessionCookieName,
+		Value:    token,
+		Path:     "/",
+		HttpOnly: true,
+		SameSite: http.SameSiteLaxMode,
+		Expires:  time.Now().Add(sessionDuration),
+	})
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]interface{}{
-		"krutrim_available": hasKey,
-		"masked_key":        maskedKey,
+		"success":  true,
+		"username": adminUser,
+	})
+}
+
+func handleLogout(w http.ResponseWriter, r *http.Request) {
+	cookie, err := r.Cookie(sessionCookieName)
+	if err == nil && cookie.Value != "" {
+		sessionsMutex.Lock()
+		delete(sessions, cookie.Value)
+		sessionsMutex.Unlock()
+	}
+
+	http.SetCookie(w, &http.Cookie{
+		Name:     sessionCookieName,
+		Value:    "",
+		Path:     "/",
+		HttpOnly: true,
+		MaxAge:   -1,
+		Expires:  time.Unix(0, 0),
+	})
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]interface{}{"success": true})
+}
+
+func handleMe(w http.ResponseWriter, r *http.Request) {
+	if !isValidSession(r) {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusUnauthorized)
+		json.NewEncoder(w).Encode(map[string]interface{}{"authenticated": false})
+		return
+	}
+
+	adminUser, _ := getAdminCredentials()
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"authenticated": true,
+		"username":      adminUser,
+	})
+}
+
+func handleGetConfig(w http.ResponseWriter, r *http.Request) {
+	krutrimKey := strings.TrimSpace(os.Getenv("KRUTRIM_API_KEY"))
+	hasKrutrim := krutrimKey != "" && krutrimKey != "your_krutrim_api_key_here"
+
+	appKey := getAppAPIKey()
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"authenticated":     true,
+		"krutrim_available": hasKrutrim,
+		"app_api_key":       appKey,
 	})
 }
 
@@ -521,13 +732,16 @@ func main() {
 	http.HandleFunc("/favicon.ico", handleFavicon)
 
 	http.HandleFunc("/", handleServeUI)
-	http.HandleFunc("/api/config", handleGetConfig)
-	http.HandleFunc("/api/captcha", handleGetCaptcha)
-	http.HandleFunc("/api/search", handleSearch)
+	http.HandleFunc("/api/login", handleLogin)
+	http.HandleFunc("/api/logout", handleLogout)
+	http.HandleFunc("/api/me", handleMe)
+
+	http.HandleFunc("/api/config", requireAuth(handleGetConfig))
+	http.HandleFunc("/api/captcha", requireAuth(handleGetCaptcha))
+	http.HandleFunc("/api/search", requireAuth(handleSearch))
 
 	log.Printf("Starting GST Lookup Go Server on port %s...", port)
 	if err := http.ListenAndServe(":"+port, nil); err != nil {
 		log.Fatalf("Server failed: %v", err)
 	}
 }
-
