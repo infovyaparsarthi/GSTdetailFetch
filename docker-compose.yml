@@ -10,7 +10,7 @@ services:
     environment:
       - KRUTRIM_API_KEY=${KRUTRIM_API_KEY:-}
       - APP_API_KEY=${APP_API_KEY:-}
-      - ADMIN_USERNAME=${ADMIN_USERNAME:-ADMIN_USERNAME}
-      - ADMIN_PASSWORD=${ADMIN_PASSWORD:- ADMIN_PASSWORD}
+      - ADMIN_USERNAME=${ADMIN_USERNAME:-}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-}
       - PORT=${PORT:-4192}
     restart: unless-stopped
